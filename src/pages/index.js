@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+
 const recipes = [
 	{
 		id: 1,
@@ -29,6 +30,8 @@ function RecipeTable({ recipes, deleteRecipe, editRecipe}) {
 		deleteRecipe(id);
 	};
 	return (
+		<div class="recipes">
+			<h2>Recipes</h2>
 		<table>
 			<thead>
 				<tr>
@@ -86,6 +89,7 @@ function RecipeTable({ recipes, deleteRecipe, editRecipe}) {
 				))}
 			</tbody>
 		</table>
+		</div>
 	);
 }
 
@@ -93,6 +97,7 @@ function FavoritesOnly({ recipes, favoriteRecipe }) {
 	const favoriteRecipes = recipes.filter((recipe) => recipe.favorite);
 
 	return (
+		<div class="favorites">
 		<table>
 			<thead>
 				<tr>
@@ -113,6 +118,7 @@ function FavoritesOnly({ recipes, favoriteRecipe }) {
 				))}
 			</tbody>
 		</table>
+		</div>
 	);
 }
 
@@ -137,6 +143,7 @@ function NewRecipe({ addRecipe }) {
 	};
 	return (
 		<form onSubmit={handleSubmit}>
+			<h2>Add Recipe</h2>
 			<label>
 				Name:
 				<input type="text" value={name} onChange={(e) => setName(e.target.value)} />
@@ -183,6 +190,7 @@ function App() {
 	};
 	return (
 		<div className="App">
+			<div class="addandedit">
 			<div>
 				<NewRecipe addRecipe={addRecipe} />
 			</div>
@@ -193,9 +201,11 @@ function App() {
 					editRecipe={editRecipe}
 				/>
 			</div>
+
+			</div>
 			<div>
 				<div>
-					<h1> Favorites Only </h1>
+					<h2> Favorites Only </h2>
 					<FavoritesOnly recipes={recipeList}  />
 				</div>
 			</div>
