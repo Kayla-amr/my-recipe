@@ -5,27 +5,29 @@ const recipes = [
 		id: 1,
 		name: 'Chicken Tacos',
 		ingredients: [ 'chicken', 'tortillas', 'cheese', 'salsa' ],
-		instructions: 'Cook chicken, put chicken in tortillas, top with cheese and salsa'
+		instructions: 'Cook chicken, put chicken in tortillas, top with cheese and salsa',
+		favorite: true
 	},
 	{
 		id: 2,
 		name: 'Cookies',
 		ingredients: [ 'flour', 'sugar', 'eggs', 'butter' ],
-		instructions: 'Mix ingredients, bake at 350 for 10 minutes'
+		instructions: 'Mix ingredients, bake at 350 for 10 minutes',
+		favorite: true
 	},
 	{
 		id: 3,
 		name: 'Milkshake',
 		ingredients: [ 'milk', 'ice cream' ],
-		instructions: 'Blend ice cream and milk'
+		instructions: 'Blend ice cream and milk',
+		favorite: false
 	}
 ];
 
-function RecipeTable({ recipes, deleteRecipe, editRecipe, favoriteRecipe }) {
+function RecipeTable({ recipes, deleteRecipe, editRecipe}) {
 	const handleDeleteClick = (id) => {
 		deleteRecipe(id);
 	};
-
 	return (
 		<table>
 			<thead>
@@ -71,7 +73,11 @@ function RecipeTable({ recipes, deleteRecipe, editRecipe, favoriteRecipe }) {
 							/>
 						</td>
 						<td>
-							<button onClick={() => favoriteRecipe(recipe.id)}> Favorite </button>
+							<input
+								type="checkbox"
+								checked={recipe.favorite}
+								onChange={(e) => editRecipe(recipe.id, 'favorite', e.target.checked)}
+							/>
 						</td>
 						<td>
 							<DeleteRecipe deleteRecipe={handleDeleteClick} id={recipe.id} />
@@ -83,11 +89,37 @@ function RecipeTable({ recipes, deleteRecipe, editRecipe, favoriteRecipe }) {
 	);
 }
 
+function FavoritesOnly({ recipes, favoriteRecipe }) {
+	const favoriteRecipes = recipes.filter((recipe) => recipe.favorite);
+
+	return (
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Ingredients</th>
+					<th>Instructions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{favoriteRecipes.map((recipe) => (
+					<tr key={recipe.id}>
+						<td>{recipe.name}</td>
+						<td>
+							<ul>{recipe.ingredients.map((ingredient, index) => <li key={index}>{ingredient}</li>)}</ul>
+						</td>
+						<td>{recipe.instructions}</td>
+					</tr>
+				))}
+			</tbody>
+		</table>
+	);
+}
+
 function DeleteRecipe({ deleteRecipe, id }) {
 	const handleDeleteClick = () => {
 		deleteRecipe(id);
 	};
-
 	return <button onClick={handleDeleteClick}>Delete</button>;
 }
 
@@ -103,7 +135,6 @@ function NewRecipe({ addRecipe }) {
 		setIngredients([]);
 		setInstructions('');
 	};
-
 	return (
 		<form onSubmit={handleSubmit}>
 			<label>
@@ -150,29 +181,23 @@ function App() {
 			})
 		);
 	};
-
-	const favoriteRecipe = (id) => {
-		setRecipeList(
-			recipeList.map((recipe) => {
-				if (recipe.id === id) {
-					return {
-						...recipe,
-						favorite: !recipe.favorite
-					};
-				} else {
-					return recipe;
-				}
-			})
-		);
-	};
-
 	return (
 		<div className="App">
 			<div>
 				<NewRecipe addRecipe={addRecipe} />
 			</div>
 			<div>
-				<RecipeTable recipes={recipeList} deleteRecipe={deleteRecipe} editRecipe={editRecipe} favoriteRecipe={favoriteRecipe} />
+				<RecipeTable
+					recipes={recipeList}
+					deleteRecipe={deleteRecipe}
+					editRecipe={editRecipe}
+				/>
+			</div>
+			<div>
+				<div>
+					<h1> Favorites Only </h1>
+					<FavoritesOnly recipes={recipeList}  />
+				</div>
 			</div>
 		</div>
 	);
